@@ -8,3 +8,10 @@ if (args[2] === "1") {
   console.log("C2");
 }
 console.log("D");
+//node Syntax/conditional.js 1
+//
+// 1
+// A
+// B
+// C1
+// D
