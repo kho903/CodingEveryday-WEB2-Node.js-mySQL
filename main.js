@@ -76,16 +76,16 @@ var app = http.createServer(function(request, response) {
         title,
         list,
         `
-        <form action="http://localhost:4000/create_process" method="post">
-        <p><input type="text" name="title" placeholder="title" /></p>
-        <p>
-          <textarea name="description" placeholder="description"></textarea>
-        </p>
-        <p>
-          <input type="submit" />
-        </p>
-      </form>
-      `,
+          <form action="/create_process" method="post">
+            <p><input type="text" name="title" placeholder="title" /></p>
+            <p>
+              <textarea name="description" placeholder="description"></textarea>
+            </p>
+            <p>
+              <input type="submit" />
+            </p>
+          </form>
+        `,
         ""
       );
       response.writeHead(200);
@@ -103,6 +103,32 @@ var app = http.createServer(function(request, response) {
       fs.writeFile(`data/${title}`, description, "utf8", function(err) {
         response.writeHead(302, { Location: `/?id=${title}` });
         response.end("success");
+      });
+    });
+  } else if (pathname === "/update") {
+    fs.readdir("./data", function(error, filelist) {
+      fs.readFile(`data/${queryData.id}`, "utf8", function(error, description) {
+        var title = queryData.id;
+        var list = templateList(filelist);
+        var template = templateHTML(
+          title,
+          list,
+          `
+          <form action="/update_process" method="post">
+            <input type="hidden" name="id" value="${title}">
+            <p><input type="text" name="title" placeholder="title" value=${title} /></p>
+            <p>
+              <textarea name="description" placeholder="description" >${description}</textarea>
+            </p>
+            <p>
+              <input type="submit" />
+            </p>
+          </form>
+          `,
+          `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
+        );
+        response.writeHead(200);
+        response.end(template);
       });
     });
   } else {
