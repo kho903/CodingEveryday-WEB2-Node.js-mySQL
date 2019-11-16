@@ -5,6 +5,7 @@ var qs = require("querystring");
 //refactoring : 동작하는 방법은 같지만 코드를 더 효율적으로 바꾸기 위한 과정
 
 var template = require("./lib/template.js");
+var path = require("path");
 
 var app = http.createServer(function(request, response) {
   var _url = request.url;
@@ -15,7 +16,6 @@ var app = http.createServer(function(request, response) {
       fs.readdir("./data", function(error, filelist) {
         var title = "Welcome";
         var description = "Hello, Node.js";
-
         var list = template.list(filelist);
         var html = template.HTML(
           title,
@@ -28,10 +28,8 @@ var app = http.createServer(function(request, response) {
       });
     } else {
       fs.readdir("./data", function(error, filelist) {
-        fs.readFile(`data/${queryData.id}`, "utf8", function(
-          error,
-          description
-        ) {
+        var filteredId = path.parse(queryData.id).base;
+        fs.readFile(`data/${filteredId}`, "utf8", function(err, description) {
           var title = queryData.id;
           var list = template.list(filelist);
           var html = template.HTML(
@@ -89,8 +87,9 @@ var app = http.createServer(function(request, response) {
       });
     });
   } else if (pathname === "/update") {
+    var filteredId = path.parse(queryData.id).base;
     fs.readdir("./data", function(error, filelist) {
-      fs.readFile(`data/${queryData.id}`, "utf8", function(error, description) {
+      fs.readFile(`data/${filteredId}`, "utf8", function(error, description) {
         var title = queryData.id;
         var list = template.list(filelist);
         var HTML = template.HTML(
@@ -140,7 +139,8 @@ var app = http.createServer(function(request, response) {
     request.on("end", function() {
       var post = qs.parse(body);
       var id = post.id;
-      fs.unlink(`data/${id}`, function(error) {
+      var filteredId = path.parse(id).base;
+      fs.unlink(`data/${filteredId}`, function(error) {
         response.writeHead(302, { Location: `/` });
         response.end("success");
       });
