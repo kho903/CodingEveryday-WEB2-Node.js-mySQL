@@ -3,34 +3,8 @@ var fs = require("fs");
 var url = require("url");
 var qs = require("querystring");
 //refactoring : 동작하는 방법은 같지만 코드를 더 효율적으로 바꾸기 위한 과정
-var template = {
-  HTML: function(title, list, body, control) {
-    return `<!DOCTYPE html>
-    <html>
-      <head>
-        <title>WEB1 - ${title}</title>
-        <meta charset="utf-8" />
-      </head>
-      <body>
-        <h1><a href="/">WEB</a></h1>
-        ${list}
-        ${control}
-        ${body}
-      </body>
-    </html>
-    `;
-  },
-  list: function(filelist) {
-    var list = "<ul>";
-    var i = 0;
-    while (i < filelist.length) {
-      list += `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
-      i += 1;
-    }
-    list = list + "</ul>";
-    return list;
-  }
-};
+
+var template = require("./lib/template.js");
 
 var app = http.createServer(function(request, response) {
   var _url = request.url;
